@@ -9,11 +9,11 @@ const myServer = http.createServer((req, res) => {
     const myUrl = url.parse(req.url, true);
     const date = Date();
     const formattedDate = date.toString().split("GMT")[0];
-    const log = `New request received on ${myUrl.path} route at ${formattedDate}\n`;
+    const log = `New ${req.method} request received on ${myUrl.path} route at ${formattedDate}\n`;
     fs.appendFile("server_logs.txt", log, (err, data) => {
         switch (myUrl.pathname) {
             case "/":
-                res.end("Hi, welcome to Home page");
+                if (req.method === "GET") res.end("Hi, welcome to Home page");
                 break;
             case "/about":
                 const userName = myUrl.query.username;
@@ -31,6 +31,12 @@ const myServer = http.createServer((req, res) => {
                     res.end('Hi, welcome to search page');
                 }
                 break;
+            case "/signup":
+                if (req.method === "GET") res.end("Welcome to signup form");
+                else if (req.method === "POST") { // User is trying to signup.
+                    // DB Query to put user data in the database.
+                    res.end("Successfully signed up!");
+                }
             default:
                 res.end("404 - Not found");
                 break;
